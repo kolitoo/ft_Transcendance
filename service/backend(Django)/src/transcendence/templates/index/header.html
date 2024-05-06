@@ -1,0 +1,168 @@
+{% load static %}
+<nav class="navbar bg-primary shadow" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a onclick="goToPage('')" role="button" class="navbar-brand fw-bold">Pong</a>
+            <div class="navbar justify-content-end" id="navbarColor02">
+				<ul class="navbar-nav mb-2 mb-lg-0 mx-2">
+					<select id="languageSelect" onchange="changeLanguage(this.value)" class="form-select" data-width="fit">
+						<option value="en">EN</option>
+						<option value="fr">FR</option>
+						<option value="es">ES</option>
+					</select>
+				</ul>
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <div id="account_dropdown" class="fw-semibold text-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+                            <img id="avatar_menu" class="rounded-circle ml-1" src="" style="width:40px; height:40px">
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end position-absolute">
+                            <li><a role="button" class="dropdown-item" id="Myaccount-mm" onclick="goToPage('accounts/me/')" data-innerText-translate="My account">My account</a></li>
+                            <li><hr class="dropdown-divider"></li>
+			    <li><a role="button" class="dropdown-item" id="logout" onclick="goToPage('accounts/username/me/')"" data-innerText-translate="MyProfile">My profile</a></li>
+			    <li><hr class="dropdown-divider"></li>
+                            <li><a role="button" class="dropdown-item" id="logout" onclick="logout()" data-innerText-translate="Logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+	<script>
+		var verifyOtpUrl = "{% url 'accounts:verify_otp' %}";
+	</script>
+
+    <!-- Modals -->
+    {% if otp_modal %}
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+		    <div class="modal-content">
+			    <div class="modal-body">
+				    <form id="otpForm" method="post">
+					    {% csrf_token %}
+					    <div class="mb-3">
+						    <input type="text" class="form-control" id="otp_code" name="otp_code" required placeholder="Code OTP" data-placeHolder-translate="OTP code">
+						    <input type="hidden" name="username" value="{{ username }}">
+						    <input type="hidden" name="password" value="{{ password }}">
+							{% if show_otp_error %}
+								<p  class="text-danger" data-innerText-translate="incorrect password">Code incorrect</p>
+							{% endif %}
+							{% if show_otp_error2 %}
+								<p  class="text-danger" data-innerText-translate="Error checking OTP code">Erreur lors de la vérification du code OTP.</p>
+							{% endif %}
+						</div>
+						<button type="submit" class="btn btn-primary" data-innerText-translate="Confirm">Valider</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		var otpModal = new bootstrap.Modal(document.getElementById('otpModal'), {
+			backdrop: 'static',
+			keyboard: false
+			});
+				otpModal.show();
+		});
+</script>
+
+	{% else %}
+	<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <div class="nav nav-tabs card-header-tabs fs-4 fw-bold" id="nav-tab" role="tablist">
+                        <a class="nav-link active" id="nav-login-tab" role="tab" href="#loginTab" data-innerText-translate="Connection">Connexion</a>
+                        <a class="nav-link" id="nav-register-tab" role="tab" href="#registerTab" data-innerText-translate="Registration">Inscription</a>
+                    </div>
+                </div>
+			<div class="modal-body">
+			<div class="tab-content">
+				<div id="loginTab" class="tab-pane fade show active">
+					<form id="myForm" class="mt-4 text-center">
+					    <div class="form-group mb-3">
+                            <input type="text" id="login_username" name="login_username" class="form-control" placeholder="Nom d'utilisateur" data-placeHolder-translate="Username">
+                            <div id="error_username" class="text-danger"></div>
+					    </div>
+					    <div class="form-group mb-3">
+						<div class="input-group">
+						    <input type="password" id="login_password" name="login_password" class="form-control" placeholder="Mot de passe" autocomplete="on" data-placeHolder-translate="Password">
+						    <div class="input-group-append">
+							<button class="btn btn-outline-secondary" type="button" id="login_togglePassword"><i class="fas fa-eye"></i></button>
+						    </div>
+						</div>
+						<div id="error_password" class="text-danger"></div>
+					    </div>
+					    <div class="text-center">
+						<button class="btn btn-primary btn-block mb-3" type="button" onclick="login()" data-innerText-translate="Connection">Connexion</button>
+					    </div>
+					    <div class="text-center">
+						<button id="SignInButton" class="btn btn-dark btn-block" type="button" data-innerText-translate="Sign in with 42">Sign in with 42</button>
+					    </div>
+					</form>
+				    </div>
+				    <div id="registerTab" class="tab-pane fade">
+					    <div class="form-group mb-3">
+						    <input type="text" id="firstname" name="firstname" class="form-control" placeholder="Prénom*" data-placeHolder-translate="First name*">
+						    <div id="firstname_error" class="text-danger"></div>
+						</div>
+						<div class="form-group mb-3">
+							<input type="text" id="lastname" name="lastname" class="form-control" placeholder="Nom de famille*" data-placeHolder-translate="Family name*">
+							<div id="lastname_error" class="text-danger"></div>
+						</div>
+						<div class="form-group mb-3">
+						    <input type="text" id="username" name="username" class="form-control" placeholder="Nom d'utilisateur*" autocomplete="on" data-placeHolder-translate="Username*">
+						    <div id="same_username" class="text-danger"></div>
+						</div>
+					<form id="register_password_from" class="input-group form-group mb-3">
+					    <input type="password" id="register_password" name="register_password" class="form-control" placeholder="Mot de passe*" autocomplete="on" data-placeHolder-translate="Password*">
+					    <div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" id="register_togglePassword"><i class="fas fa-eye"></i></button>
+					    </div>
+					</form>
+					<div id="passworderror" class="text-danger"></div>
+					<form class="input-group form-group mb-3">
+						<input type="password" id="register_password_confirm" name="register_password_confirm" class="form-control" placeholder="Confirmez le mot de passe*" autocomplete="on" data-placeHolder-translate="Confirm password*">
+						<div class="input-group-append">
+						    <button class="btn btn-outline-secondary" type="button" id="register_togglePassword_confirm"><i class="fas fa-eye"></i></button>
+						</div>
+					</form>
+					<div id="password_confirm_error" class="text-danger"></div>
+					<p class="" data-innerText-translate="Select an avatar*">Sélectionnez un avatar*</p>
+					<div class="container mb-3">
+						<div class="row justify-content-center">
+						    <div class="col d-flex justify-content-between" id="image-row">
+							<div class="image-container">
+							    <img src="/media/avatar/asian.png" alt="Image 1" class="img-fluid image-thumbnail rounded">
+							</div>
+							<div class="image-container">
+							    <img src="/media/avatar/asianwoman.png" alt="Image 2" class="img-fluid image-thumbnail rounded">
+							</div>
+							<div class="image-container">
+							    <img src="/media/avatar/pongplayer.png" alt="Image 3" class="img-fluid image-thumbnail rounded">
+							</div>
+							<div class="image-container">
+							    <img src="/media/avatar/enstein.png" alt="Image 4" class="img-fluid image-thumbnail rounded">
+							</div>
+						    </div>
+						</div>
+					</div>
+					<input type="hidden" id="avatar_id" name="avatar" accept="image/*">
+					<div id="avatar_error" class="text-danger"></div>
+					<div id="void" class="text-danger"></div>
+					<div class="text-center">
+						<button id="register" type="button" class="btn btn-primary mb-3r" onclick="register()" data-innerText-translate="Register">S'enregistrer</button>
+					</div>
+					<p class="mb-0" id="obligatoire" data-innerText-translate="* Mandatory">* Obligatoires</p>
+				</div>
+			</div>
+			</div>
+		</div>
+		</div>
+	</div>
+	{% endif %}
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

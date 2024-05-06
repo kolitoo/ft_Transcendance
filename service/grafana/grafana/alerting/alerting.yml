@@ -1,0 +1,171 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: Eval Transcendence
+      folder: Transcendence
+      interval: 1m
+      rules:
+        - uid: edg1wy35vslq8f
+          title: Memory usage (MB)
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 900
+                to: 0
+              datasourceUid: PBFA97CFB590B2093
+              model:
+                datasource:
+                    type: prometheus
+                    uid: PBFA97CFB590B2093
+                editorMode: code
+                expr: container_memory_usage_bytes{container_label_com_docker_compose_service=~"redis.*|backend.*|postgre.*|nginx.*|prometheus.*|cadvisor.*|grafana.*", job="cadvisor"} / (1024 * 1024)
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: '{{name}}'
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 8499
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: adfn5gc2kgiyof
+          panelId: 1
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: adfn5gc2kgiyof
+            __panelId__: "1"
+          labels: {}
+          isPaused: false
+        - uid: ddg1x04i5yvb4b
+          title: CPU usage
+          condition: B
+          data:
+            - refId: CPU usage (%)
+              relativeTimeRange:
+                from: 900
+                to: 0
+              datasourceUid: PBFA97CFB590B2093
+              model:
+                datasource:
+                    type: prometheus
+                    uid: PBFA97CFB590B2093
+                editorMode: code
+                expr: rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~"redis.*|backend.*|postgre.*|nginx.*|prometheus.*|cadvisor.*|grafana.*", job="cadvisor"}[10s]) * 100
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: '{{name}}'
+                maxDataPoints: 43200
+                range: true
+                refId: CPU usage (%)
+            - refId: A
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - A
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: CPU usage (%)
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: A
+                type: reduce
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 85
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: threshold
+          dashboardUid: adfn5gc2kgiyof
+          panelId: 2
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: adfn5gc2kgiyof
+            __panelId__: "2"
+          labels: {}
+          isPaused: false

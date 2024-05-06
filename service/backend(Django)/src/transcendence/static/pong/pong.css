@@ -1,0 +1,80 @@
+#play,
+#localPlay {
+	width: unset;
+	height: unset;
+	top: 50%;
+	left:50%;
+	transform: translate(-50%, -50%);
+}
+
+#pong_borders {
+	background-image: linear-gradient(white, white);
+	background-size: 2px 100%;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+#player_left,
+#player_right {
+	height: 10%;
+	position: relative;
+	transform: translate(0%, -50%);
+	top: 50%;
+}
+
+#player_left,
+#player_right,
+#ball,
+#ball4,
+#localBall {
+	width: 1%;
+}
+
+#player_top,
+#player_bottom {
+	height: 1%;
+	width: 10%;
+	position: relative;
+	transform: translate(-50%, 0%);
+	left: 50%;
+}
+
+#ball {
+	height: 1.333333333%;
+	z-index: 1;
+
+	position: relative;
+	transform: translate(-150%, -50%);
+	top: 50%;
+	left: 50%;
+    transition: all 25ms linear;
+}
+
+#localBall {
+	height: 1.333333333%;
+	z-index: 1;
+
+	position: relative;
+	transform: translate(-150%, -50%);
+	top: 50%;
+	left: 50%;
+}
+
+#ball4 {
+	height: 1%;
+	z-index: 1;
+
+	position: relative;
+	transform: translate(-150%, -50%);
+	top: 50%;
+	left: 50%;
+    transition: all 25ms linear;
+}
+
+.nopadding {
+	padding: 0 !important;
+}
+
+.no--bs-gutter-x {
+	--bs-gutter-x: 0 !important;
+}

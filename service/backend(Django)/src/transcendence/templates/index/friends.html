@@ -1,0 +1,31 @@
+<!-- Chat Menu -->
+<div class="collapse end-0 col-sm-3 pl-0 py-3 pr-3" id="chatMenu" style="z-index: 100;">
+	<div class="card" style="overflow: auto; max-height: 70vh;">
+		<div class="card-header text-center fw-bold" data-innerText-translate="Friends">
+			Friends
+		</div>
+		<div class="friend-list card-body list-group list-group-flush border-bottom p-0" style="overflow: auto;">
+        <!--LISTE AMIS-->
+        <!-- La liste d'amis mise à jour sera affichée ici par JavaScript -->
+		</div>
+		<!--barre recherche-->
+		<form id="search-user-form" class="card-footer m-0" method="post">
+			{% csrf_token %}
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Username" id="search_username" name="search_username" required data-placeHolder-translate="Username">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+		</form>
+		<!--Resultat recherche amis-->
+		<div id="search-result" class="card-body list-group list-group-flush p-0" style="overflow: auto;">
+			<!--Ici resultat de recherche d'amis-->
+		</div>
+		<!--DEMANDES AMIS-->
+		<div id="demande-amis" class="card-body list-group list-group-flush p-0" style="overflow: auto;">
+			<!--Ici les demandes d'amis-->
+		</div>
+	</div>
+</div>
+<div class="position-absolute end-0 col-sm-3 pl-0 py-3 pr-3" id="notificationArea" style="z-index: 200;"></div>

@@ -1,0 +1,116 @@
+version : '3,9'
+services:
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./service/proxyinverse(nginx)
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgre
+    networks:
+      - transcendence
+
+  postgre:
+    container_name: postgre
+    build:
+      context: ./service/DB(postgreSQL)
+      dockerfile: Dockerfile
+    env_file: ./service/DB(postgreSQL)/env/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - DB-V:/var/lib/postgresql/data/
+    networks:
+      - transcendence
+
+  backend:
+    container_name: backend
+    build:
+      context: ./service/backend(Django)
+      dockerfile: Dockerfile
+    env_file: ./service/DB(postgreSQL)/env/.env
+    ports:
+      - "8000"
+    depends_on:
+      - postgre
+    volumes:
+      - backend-V:/usr/src/app/media
+    networks:
+      - transcendence
+  
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - "6378"
+    depends_on:
+      - backend
+    volumes:
+      - redis-V:/data
+    networks:
+      - transcendence
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.46.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
+    expose:
+      - 8989
+    ports:
+      - "9000:8989"
+    command: --logtostderr --port=8989
+    networks:
+      - transcendence
+    #Commande : http://localhost:9000/containers/
+
+  prometheus:
+    container_name: prometheus
+    build:
+      context: ./service/prometheus
+      dockerfile: Dockerfile
+    ports:
+      - 9090:9090
+    networks:
+      - transcendence
+    depends_on:
+      - cadvisor
+    volumes:
+      - prometheus-V:/prometheus
+    #Commande : http://localhost:9090
+  
+  grafana:
+    container_name: grafana
+    build:
+      context: ./service/grafana
+      dockerfile: Dockerfile
+    ports:
+      - "9099:3000"
+    networks:
+      - transcendence
+    depends_on:
+      - prometheus 
+    volumes:
+      - grafana-V:/var/lib/grafana
+      - ./service/grafana/grafana:/etc/grafana/provisioning/
+    # http://127.0.0.1:9099/connections/datasources  
+
+#Volume pour la base de donnee et backend geree uniquement avec docker
+volumes:
+  DB-V:
+  backend-V:
+  redis-V:
+  grafana-V:
+  prometheus-V:
+
+networks:
+  transcendence:
+    name: transcendence
